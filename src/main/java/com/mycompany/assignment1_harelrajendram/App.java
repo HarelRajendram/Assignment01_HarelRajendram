@@ -53,46 +53,58 @@ public class App extends Application {
                 String keyWord = letters[i][j];
                 
                  Button button = new Button(keyWord);
-                 
+                 button.setFocusTraversable(false);
                  buttonMap.put(keyWord , button);
                  
                  hb.getChildren().add(button);
+                 if (keyWord.equals("SPACE")) {
+                     button.setPrefWidth(190);
+                 }
+                  if (keyWord.equals("SHIFT") || keyWord.equals("BACKSPACE")) {
+                      button.setPrefWidth(90);
+                }
             }
              vb.getChildren().add(hb);
         }
+       
         
         var scene = new Scene(vb, 640, 480);
         
         Label statusLabel = new Label("Key pressed: None");
+        vb.getChildren().add(statusLabel);
         
         scene.setOnKeyPressed(event -> {
         String keyPressed = event.getCode().toString();
         Button virtualLetter = buttonMap.get(keyPressed);
         
-        statusLabel.setText(keyPressed);
         
-        
-        if (keyPressed != null) {
-        virtualLetter.setStyle("-fx-text-fill: white;");
-        statusLabel.setText("key pressed :" + keyPressed);
+        if (virtualLetter != null) {
+        virtualLetter.setStyle("-fx-background-color: #0078D7;-fx-text-fill: white;");
+        statusLabel.setText("key pressed: " + keyPressed);
         statusLabel.setStyle("-fx-text-fill:black;");
+        
         } else {
             
+        statusLabel.setText("Not handled");
         statusLabel.setStyle("-fx-text-fill:red;");
         
         }
         });
         
-        scene.setOnKeyPressed(event -> {
+        scene.setOnKeyReleased(event -> {
             String keyPressed = event.getCode().toString();
-            Button virtualLetter = new Button(keyPressed);
+            Button virtualLetter = buttonMap.get(keyPressed);
             
-            statusLabel.setText("");
+            if (virtualLetter != null) {
+                virtualLetter.setStyle("");
+            }
         });
         
         
         stage.setScene(scene);
         stage.show();
+        
+        text.requestFocus();
     }
 
     public static void main(String[] args) {
