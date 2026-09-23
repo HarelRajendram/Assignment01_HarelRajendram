@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -23,6 +24,10 @@ public class App extends Application {
     public void start(Stage stage) {
         VBox vb = new VBox(8);
         vb.setAlignment(Pos.CENTER);
+        
+        int currentIndex = 0;
+        
+        TextField text = new TextField();
         
         String[] phrases = {"Try typing this text. Do it as quickly and accurately as you can.",
             "Next type another line of input data.",
@@ -55,10 +60,37 @@ public class App extends Application {
             }
              vb.getChildren().add(hb);
         }
-     
-        
         
         var scene = new Scene(vb, 640, 480);
+        
+        Label statusLabel = new Label("Key pressed: None");
+        
+        scene.setOnKeyPressed(event -> {
+        String keyPressed = event.getCode().toString();
+        Button virtualLetter = buttonMap.get(keyPressed);
+        
+        statusLabel.setText(keyPressed);
+        
+        
+        if (keyPressed != null) {
+        virtualLetter.setStyle("-fx-text-fill: white;");
+        statusLabel.setText("key pressed :" + keyPressed);
+        statusLabel.setStyle("-fx-text-fill:black;");
+        } else {
+            
+        statusLabel.setStyle("-fx-text-fill:red;");
+        
+        }
+        });
+        
+        scene.setOnKeyPressed(event -> {
+            String keyPressed = event.getCode().toString();
+            Button virtualLetter = new Button(keyPressed);
+            
+            statusLabel.setText("");
+        });
+        
+        
         stage.setScene(scene);
         stage.show();
     }
