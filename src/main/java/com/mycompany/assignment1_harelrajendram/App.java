@@ -3,11 +3,14 @@ package com.mycompany.assignment1_harelrajendram;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
@@ -18,6 +21,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        VBox vb = new VBox(8);
+        vb.setAlignment(Pos.CENTER);
+        
         String[] phrases = {"Try typing this text. Do it as quickly and accurately as you can.",
             "Next type another line of input data.",
              "The quick brown fox jumps over the lazy dog.",
@@ -25,8 +31,6 @@ public class App extends Application {
                 "Sympathizing would fix Quaker objectives.",
                 "A large fawn jumped quickly over white zinc boxes."};
         
-        GridPane grid = new GridPane();
-        Button button = new Button();
         Map<String , Button> buttonMap = new HashMap<>();
         
         String[][] letters = {
@@ -37,15 +41,24 @@ public class App extends Application {
         };
         
         for(int i = 0; i < letters.length; i++) {
+            HBox hb = new HBox(5);
+            hb.setAlignment(Pos.CENTER);
+                
             for (int j = 0; j < letters[i].length; j++) {
                 String keyWord = letters[i][j];
+                
+                 Button button = new Button(keyWord);
+                 
+                 buttonMap.put(keyWord , button);
+                 
+                 hb.getChildren().add(button);
             }
+             vb.getChildren().add(hb);
         }
-        Button button = new Button(keyWord);
-      
+     
         
         
-        var scene = new Scene(grid, 640, 480);
+        var scene = new Scene(vb, 640, 480);
         stage.setScene(scene);
         stage.show();
     }
