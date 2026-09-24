@@ -19,6 +19,8 @@ import javafx.stage.Stage;
  * JavaFX App
  */
 public class App extends Application {
+    private int correctLetter;
+    private int wrongLetters;
 
     @Override
     public void start(Stage stage) {
@@ -27,14 +29,15 @@ public class App extends Application {
         
         int currentIndex = 0;
         
-        TextField text = new TextField();
-        
+        TextField userTypedText = new TextField();
+    
         String[] phrases = {"Try typing this text. Do it as quickly and accurately as you can.",
             "Next type another line of input data.",
              "The quick brown fox jumps over the lazy dog.",
               "Five big quacking zephyrs jolt my wax bed.",
                 "Sympathizing would fix Quaker objectives.",
                 "A large fawn jumped quickly over white zinc boxes."};
+        
         
         Map<String , Button> buttonMap = new HashMap<>();
         
@@ -77,6 +80,16 @@ public class App extends Application {
         String keyPressed = event.getCode().toString();
         Button virtualLetter = buttonMap.get(keyPressed);
         
+        int targetIndex = userTypedText.getText().length();
+        
+           char expected = phrases[0].charAt(targetIndex);
+        
+        if (expected == userTypedText.getText().charAt(targetIndex) && userTypedText.getText().length() == 1)  {
+            correctLetter += 1;
+        } else {
+           wrongLetters += 1;
+        }
+
         
         if (virtualLetter != null) {
         virtualLetter.setStyle("-fx-background-color: #0078D7;-fx-text-fill: white;");
