@@ -73,24 +73,38 @@ public class App extends Application {
         
         var scene = new Scene(vb, 640, 480);
         
+        Label accuracyLabel = new Label("Correct: 0 | Incorrect: 0");
         Label statusLabel = new Label("Key pressed: None");
-        vb.getChildren().add(statusLabel);
+        Label prompText = new Label(phrases[currentIndex]);
+        vb.getChildren().addAll(statusLabel,accuracyLabel, prompText);
         
         scene.setOnKeyPressed(event -> {
-        String keyPressed = event.getCode().toString();
+            String keyPressed = event.getCode().toString();
         Button virtualLetter = buttonMap.get(keyPressed);
         
+        
+            if (keyPressed.length() == 1) {
+            
         int targetIndex = userTypedText.getText().length();
+        String currentPhrase = phrases[currentIndex];
         
-           char expected = phrases[0].charAt(targetIndex);
+        if (targetIndex < currentPhrase.length()) {
+            
+         char expected = Character.toUpperCase(currentPhrase.charAt(targetIndex));
+         char typed = keyPressed.charAt(0);
         
-        if (expected == userTypedText.getText().charAt(targetIndex) && userTypedText.getText().length() == 1)  {
+        if (expected == keyPressed.charAt(0))  {
             correctLetter += 1;
         } else {
            wrongLetters += 1;
         }
+        accuracyLabel.setText("Correct: " + correctLetter + " | Incorrect: " + wrongLetters);
 
+    }
         
+        }
+        
+          
         if (virtualLetter != null) {
         virtualLetter.setStyle("-fx-background-color: #0078D7;-fx-text-fill: white;");
         statusLabel.setText("key pressed: " + keyPressed);
@@ -102,6 +116,7 @@ public class App extends Application {
         statusLabel.setStyle("-fx-text-fill:red;");
         
         }
+        
         });
         
         scene.setOnKeyReleased(event -> {
@@ -112,12 +127,12 @@ public class App extends Application {
                 virtualLetter.setStyle("");
             }
         });
-        
+        vb.getChildren().add(userTypedText);
         
         stage.setScene(scene);
         stage.show();
         
-        text.requestFocus();
+        userTypedText.requestFocus();
     }
 
     public static void main(String[] args) {
