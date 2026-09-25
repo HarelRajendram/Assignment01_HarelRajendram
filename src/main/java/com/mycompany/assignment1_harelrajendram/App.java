@@ -38,6 +38,12 @@ public class App extends Application {
                 "Sympathizing would fix Quaker objectives.",
                 "A large fawn jumped quickly over white zinc boxes."};
         
+         Label accuracyLabel = new Label("Correct: 0 | Incorrect: 0");
+        Label statusLabel = new Label("Key pressed: None");
+        Label prompText = new Label(phrases[currentIndex]);
+        
+        
+        vb.getChildren().addAll(prompText,userTypedText ,statusLabel,accuracyLabel);
         
         Map<String , Button> buttonMap = new HashMap<>();
         
@@ -73,37 +79,41 @@ public class App extends Application {
         
         var scene = new Scene(vb, 640, 480);
         
-        Label accuracyLabel = new Label("Correct: 0 | Incorrect: 0");
-        Label statusLabel = new Label("Key pressed: None");
-        Label prompText = new Label(phrases[currentIndex]);
-        vb.getChildren().addAll(statusLabel,accuracyLabel, prompText);
-        
         scene.setOnKeyPressed(event -> {
-            String keyPressed = event.getCode().toString();
+        String keyPressed = event.getCode().toString();
         Button virtualLetter = buttonMap.get(keyPressed);
         
-        
-            if (keyPressed.length() == 1) {
-            
-        int targetIndex = userTypedText.getText().length();
+         int targetIndex = userTypedText.getText().length();
         String currentPhrase = phrases[currentIndex];
         
-        if (targetIndex < currentPhrase.length()) {
-            
-         char expected = Character.toUpperCase(currentPhrase.charAt(targetIndex));
-         char typed = keyPressed.charAt(0);
+        boolean isValidChar = false;
+        char typed = ' ';
         
-        if (expected == keyPressed.charAt(0))  {
-            correctLetter += 1;
-        } else {
-           wrongLetters += 1;
+            if (keyPressed.length() == 1) {
+            typed = keyPressed.charAt(0);
+            isValidChar = true;
+       
+        
+        char expected = Character.toUpperCase(currentPhrase.charAt(targetIndex));
+       
+        } else if (keyPressed.equals("SPACE")) {
+            typed = ' ';
+            isValidChar = true;
+            
+            userTypedText.appendText(" ");
+        
         }
+            if (isValidChar && targetIndex < currentPhrase.length()) {
+                char expected = Character.toUpperCase(currentPhrase.charAt(targetIndex));            
+           
+                if (expected == typed)  {
+                    correctLetter += 1;
+            } else {
+           wrongLetters += 1;
+            }
         accuracyLabel.setText("Correct: " + correctLetter + " | Incorrect: " + wrongLetters);
 
     }
-        
-        }
-        
           
         if (virtualLetter != null) {
         virtualLetter.setStyle("-fx-background-color: #0078D7;-fx-text-fill: white;");
@@ -114,7 +124,11 @@ public class App extends Application {
             
         statusLabel.setText("Not handled");
         statusLabel.setStyle("-fx-text-fill:red;");
-        
+        }
+        if (userTypedText.getText().length() >= currentPhrase.length()) {
+            currentIndex++;
+            
+            if ()
         }
         
         });
@@ -127,7 +141,6 @@ public class App extends Application {
                 virtualLetter.setStyle("");
             }
         });
-        vb.getChildren().add(userTypedText);
         
         stage.setScene(scene);
         stage.show();
