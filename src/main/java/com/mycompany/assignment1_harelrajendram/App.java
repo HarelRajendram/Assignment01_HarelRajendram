@@ -25,6 +25,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        //setting up the rows and columns for the key board
         VBox vb = new VBox(8);
         vb.setAlignment(Pos.CENTER);
         
@@ -86,7 +87,7 @@ public class App extends Application {
         counterLabel.setText((currentIndex + 1) + " of " + phrases.length);
         
         };
-        
+        //action button when clicking next button
         nextButton.setOnAction(e -> {
             if (currentIndex < phrases.length - 1) {
                 currentIndex++;
@@ -95,8 +96,9 @@ public class App extends Application {
             }
         });
        
-        var scene = new Scene(vb, 640, 480);
+        Scene scene = new Scene(vb, 640, 480);
         
+        //action button when pressing the keys
         scene.setOnKeyPressed(event -> {
         String keyPressed = event.getCode().toString();
         
@@ -146,7 +148,7 @@ public class App extends Application {
             }
         }
      });
-        
+        //action button when releasing the keys
         scene.setOnKeyReleased(event -> {
             String keyPressed = event.getCode().toString();
             if (keyPressed.equals("BACK_SPACE")) {
@@ -158,6 +160,7 @@ public class App extends Application {
                 virtualLetter.setStyle("");
             }
         });
+        //acton button for reset button
         resetButton.setOnAction(e -> {
             correctLetter = 0;
             wrongLetters = 0;
