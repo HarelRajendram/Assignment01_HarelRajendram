@@ -37,7 +37,7 @@ public class App extends Application {
                 "Sympathizing would fix Quaker objectives.",
                 "A large fawn jumped quickly over white zinc boxes."};
         
-        Label counterLabel = new Label((currentIndex + 1) +"of " + phrases.length);
+        Label counterLabel = new Label((currentIndex + 1) +" of " + phrases.length);
          Label accuracyLabel = new Label("Correct: 0 | Incorrect: 0");
         Label statusLabel = new Label("Key pressed: None");
         Label prompText = new Label(phrases[currentIndex]);
@@ -45,9 +45,11 @@ public class App extends Application {
         Button nextButton = new Button("Next");
         Button resetButton = new Button("Reset");
         
+        HBox controlBx = new HBox(10 ,nextButton, resetButton, counterLabel );
+        controlBx.setAlignment(Pos.CENTER);
         
-        vb.getChildren().addAll(prompText,userTypedText ,statusLabel,accuracyLabel);
-        
+         vb.getChildren().addAll(controlBx, prompText,userTypedText ,statusLabel,accuracyLabel);
+         
         Map<String , Button> buttonMap = new HashMap<>();
         
         String[][] letters = {
@@ -81,45 +83,29 @@ public class App extends Application {
         Runnable updatePhrase = () -> {
         prompText.setText(phrases[currentIndex]);
         userTypedText.clear();
-        counterLabel.setText((currentIndex + 1) +"of " + phrases.length);
+        counterLabel.setText((currentIndex + 1) + " of " + phrases.length);
         
         };
+        
+        nextButton.setOnAction(e -> {
+            if (currentIndex < phrases.length - 1) {
+                currentIndex++;
+                
+                updatePhrase.run();
+            }
+        });
        
         var scene = new Scene(vb, 640, 480);
         
         scene.setOnKeyPressed(event -> {
         String keyPressed = event.getCode().toString();
-        Button virtualLetter = buttonMap.get(keyPressed);
         
-         int targetIndex = userTypedText.getText().length();
-        String currentPhrase = phrases[currentIndex];
-        
-        boolean isValidChar = false;
-        char typed = ' ';
-        
-            if (keyPressed.length() == 1) {
-            typed = keyPressed.charAt(0);
-            isValidChar = true;
-       
-        } else if (keyPressed.equals("SPACE")) {
-            typed = ' ';
-            isValidChar = true;
-            
-            userTypedText.appendText(" ");
-        
-        }
-            if (isValidChar && targetIndex < currentPhrase.length()) {
-                char expected = Character.toUpperCase(currentPhrase.charAt(targetIndex));            
-           
-                if (expected == typed)  {
-                    correctLetter += 1;
-            } else {
-           wrongLetters += 1;
-            }
-        accuracyLabel.setText("Correct: " + correctLetter + " | Incorrect: " + wrongLetters);
-
+        if (keyPressed.equals("BACK_SPACE")) {
+        keyPressed = "BACKSPACE";
     }
-          
+        
+        Button virtualLetter = buttonMap.get(keyPressed);
+           
         if (virtualLetter != null) {
         virtualLetter.setStyle("-fx-background-color: #0078D7;-fx-text-fill: white;");
         statusLabel.setText("key pressed: " + keyPressed);
@@ -129,23 +115,43 @@ public class App extends Application {
             
         statusLabel.setText("Not handled");
         statusLabel.setStyle("-fx-text-fill:red;");
+        
         }
-        if (userTypedText.getText().length() >= currentPhrase.length()) {
-            currentIndex++;
-            
-            if (currentIndex < phrases.length) {
-                prompText.setText(phrases[currentIndex]);
-                userTypedText.clear();
+        });
+       userTypedText.textProperty().addListener((observable, oldValue, newValue) -> {
+    String currentPhrase = phrases[currentIndex];
+
+    if (newValue.length() > oldValue.length()) {
+        int typedIndex = newValue.length() - 1;
+
+        if (typedIndex < currentPhrase.length()) {
+            char expected = Character.toUpperCase(currentPhrase.charAt(typedIndex));
+            char typed = Character.toUpperCase(newValue.charAt(typedIndex));
+
+            if (expected == typed) {
+                correctLetter++;
+            } else {
+                wrongLetters++;
+            }
+            accuracyLabel.setText("Correct: " + correctLetter + " | Incorrect: " + wrongLetters);
+        }
+    }
+     if (newValue.length() >= currentPhrase.length()) {
+            if (currentIndex < phrases.length - 1) {
+                currentIndex++;
+                updatePhrase.run();
             } else {
             prompText.setText("Congratulations you have completed all the phrases! ");
             userTypedText.setDisable(true);
             }
         }
-        
-        });
+     });
         
         scene.setOnKeyReleased(event -> {
             String keyPressed = event.getCode().toString();
+            if (keyPressed.equals("BACK_SPACE")) {
+        keyPressed = "BACKSPACE";
+    }
             Button virtualLetter = buttonMap.get(keyPressed);
             
             if (virtualLetter != null) {
@@ -156,13 +162,12 @@ public class App extends Application {
             correctLetter = 0;
             wrongLetters = 0;
             currentIndex = 0;
-            accuracyLabel.setText("Key pressed: None");accuracyLabel.setText("Correct: 0 | Incorrect: 0");
+            userTypedText.setDisable(false);
+            accuracyLabel.setText("Correct: 0 | Incorrect: 0");
             statusLabel.setText("Key pressed: None");
             statusLabel.setStyle("-fx-text-fill: black;");
             updatePhrase.run();
             
-            
-        
         });
         
         stage.setTitle("Typing Tutor");
