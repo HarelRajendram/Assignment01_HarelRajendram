@@ -21,13 +21,12 @@ import javafx.stage.Stage;
 public class App extends Application {
     private int correctLetter;
     private int wrongLetters;
+    private int currentIndex;
 
     @Override
     public void start(Stage stage) {
         VBox vb = new VBox(8);
         vb.setAlignment(Pos.CENTER);
-        
-        int currentIndex = 0;
         
         TextField userTypedText = new TextField();
     
@@ -38,9 +37,13 @@ public class App extends Application {
                 "Sympathizing would fix Quaker objectives.",
                 "A large fawn jumped quickly over white zinc boxes."};
         
+        Label counterLabel = new Label((currentIndex + 1) +"of " + phrases.length);
          Label accuracyLabel = new Label("Correct: 0 | Incorrect: 0");
         Label statusLabel = new Label("Key pressed: None");
         Label prompText = new Label(phrases[currentIndex]);
+        
+        Button nextButton = new Button("Next");
+        Button resetButton = new Button("Reset");
         
         
         vb.getChildren().addAll(prompText,userTypedText ,statusLabel,accuracyLabel);
@@ -75,8 +78,13 @@ public class App extends Application {
             }
              vb.getChildren().add(hb);
         }
-       
+        Runnable updatePhrase = () -> {
+        prompText.setText(phrases[currentIndex]);
+        userTypedText.clear();
+        counterLabel.setText((currentIndex + 1) +"of " + phrases.length);
         
+        };
+       
         var scene = new Scene(vb, 640, 480);
         
         scene.setOnKeyPressed(event -> {
@@ -92,9 +100,6 @@ public class App extends Application {
             if (keyPressed.length() == 1) {
             typed = keyPressed.charAt(0);
             isValidChar = true;
-       
-        
-        char expected = Character.toUpperCase(currentPhrase.charAt(targetIndex));
        
         } else if (keyPressed.equals("SPACE")) {
             typed = ' ';
@@ -128,7 +133,13 @@ public class App extends Application {
         if (userTypedText.getText().length() >= currentPhrase.length()) {
             currentIndex++;
             
-            if ()
+            if (currentIndex < phrases.length) {
+                prompText.setText(phrases[currentIndex]);
+                userTypedText.clear();
+            } else {
+            prompText.setText("Congratulations you have completed all the phrases! ");
+            userTypedText.setDisable(true);
+            }
         }
         
         });
@@ -141,7 +152,20 @@ public class App extends Application {
                 virtualLetter.setStyle("");
             }
         });
+        resetButton.setOnAction(e -> {
+            correctLetter = 0;
+            wrongLetters = 0;
+            currentIndex = 0;
+            accuracyLabel.setText("Key pressed: None");accuracyLabel.setText("Correct: 0 | Incorrect: 0");
+            statusLabel.setText("Key pressed: None");
+            statusLabel.setStyle("-fx-text-fill: black;");
+            updatePhrase.run();
+            
+            
         
+        });
+        
+        stage.setTitle("Typing Tutor");
         stage.setScene(scene);
         stage.show();
         
