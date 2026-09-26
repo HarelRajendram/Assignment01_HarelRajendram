@@ -31,6 +31,7 @@ public class App extends Application {
         
         TextField userTypedText = new TextField();
     
+        //built phrases for the user to type
         String[] phrases = {"Try typing this text. Do it as quickly and accurately as you can.",
             "Next type another line of input data.",
              "The quick brown fox jumps over the lazy dog.",
@@ -104,8 +105,9 @@ public class App extends Application {
         
         if (keyPressed.equals("BACK_SPACE")) {
         keyPressed = "BACKSPACE";
-    }
-        
+    } else if (keyPressed.startsWith("SHIFT")) {
+    keyPressed = "SHIFT";
+}
         Button virtualLetter = buttonMap.get(keyPressed);
            
         if (virtualLetter != null) {
